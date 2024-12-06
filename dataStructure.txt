@@ -1,0 +1,49 @@
+
+
+
+
+vector<list<sWord>> table;
+
+struct sWord {
+    string simple;
+    vector <word> allVersions;
+}
+
+struct word {
+	string key;
+	set <file> files;
+}
+
+struct file {
+	string fileName;
+	set <line> lines;
+}
+
+struct line {
+	int lineNum;
+	string lineContent;
+}
+
+
+functions needed: 
+
+readin: 
+
+traverse() - travel through the directory
+readFile() - open file with filename
+readLine() - read the file line by line, push them into stringstream and then read word by word, create word struct if needed
+readWord() - 
+
+
+build-up dictionary: 
+
+struct word {
+	string theWord;
+	pair <int, int> info;
+}
+
+struct file {
+	string filePath;
+	vector <int> lineNums;
+}
+

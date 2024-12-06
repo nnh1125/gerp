@@ -1,0 +1,110 @@
+Names: Jenni Lu, Ha Nguyen
+utlns: jlu08, nnguye21
+
+Answer the questions below, and submit your answers under the assignment
+"gerp Design Checkoff" on Gradescope. You must sign up for a design checkoff
+slot with a TA to discuss your provided answers (see spec for sign up link).
+Make sure to submit this file *prior* to your design checkoff.
+
+For each question, give as much detail as you feel is necessary.
+
+1. What classes and structs will you implement for your program? For each class,
+   provide a list of public functions of that class; for each struct, provide a
+   list of member variables.
+
+Answer:
+
+   dictionary: hold all the words that appears in the directory
+
+   AVLTree / hashmap
+   
+   words: a string of the word, a set of data that records the file (vector)
+
+   file: a string of fileName, a set of data of lineNum
+
+   lineNum: ADT: queue -> c-string / vector
+   
+
+
+        
+2. Describe the index that you will build for querying. What specific data
+   structures will you use to build this index? *Important*: Bring an
+   accompanying drawing of your index structure when you come to your checkoff.
+
+Answer: hashmap
+
+3. To use your index, you will use something for lookup (the key) and you will
+   get some associated data back (the value). What are the C++ *types* of your
+   index's key and value? Examples of valid types: int, string,
+   vector<string>, vector<list<string>>; you may also define custom types using
+   structs/classes, e.g., Animal and vector<Animal> are valid types if you
+   define a struct/class named Animal. If your key/value types involve custom
+   classes/structs, they should be included in your answer to question #1.
+                
+Answer:
+
+   Key type: string
+   Value type:  unordered_map<words{word{string word; vector/unordered_map<file{string fileName; set<lineNum>}}>}>    
+
+4. Explain what a collision is versus having multiple lines associated with 
+   a particular word. Write (and/or draw) out an example of when a 
+   collision occurs. Write (and/or draw) out an example of when multiple 
+   lines associated with a single word. 
+
+Answer: A collision is that different words hash to the same bucket. Multiple lines
+   can be associated with a particular word.
+
+5. What do you expect the *space* complexity of your index will be? How many
+   times will a single line be stored according to your data structures?
+
+Answer: Since we are pursuing in a better preformance on time complexity, the space
+   complexity will be at a relatively low performance. We need better data structure
+   to prioritize it. 
+   For one line, n time storage. 
+
+
+6. What is the time complexity of *building* your index? If you refer to some
+   variable, be sure to specify what the variable refers to, e.g., in "O(n)",
+   state explicitly what "n" is.
+
+Answer:O(n^2) / O(n)
+                
+7. What is the time complexity of *using* your index for lookup? As above,
+   be specific about variables you use.
+
+Answer: O(1)
+
+8. How will you handle case-sensitive search?
+   What is the time complexity (should be close to O(1))?
+
+Answer: O(1)
+
+9. How will you handle case-insensitive search?
+   What is the time complexity (should be close to O(1))?
+
+Answer: O(1), put insensitive strings together during the reading phase
+
+10. How are you handling duplicate words within a line? Consider these two example 
+   lines: 
+
+      (i) the cat and the dog 
+      (ii) the cat and THE dog 
+
+   If a user does a case sensitive query on line (i) it should report 'the' only 
+   once by showing the line only once in the output. How will you do this? 
+
+   If a user does a case insensitive query on line (ii) it should report 'the' 
+   only once by showing the line only once in the output. How will you do this? 
+
+Answer: use set for lineNum
+
+11. How will you test your implementation and what specific evidence of testing
+    will you submit?
+
+Answer: unit_test if possible, text file together with sample program to diff the result 
+
+12. What is your schedule for completing this assignment? Include specific dates
+    and the tasks that you would like to accomplish by each date. Do not forget
+    testing!
+
+Answer: Fri 1215 for design checkoff, Sat 215 meeting to work for phase 1
