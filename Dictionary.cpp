@@ -30,8 +30,8 @@ Dictionary::Dictionary() {
  * returns:   none
  * effects:   add a version to SWord
  */
-SWord* Dictionary::getSWord(string key) {
-    // string key = stripLowerCase(theWord);
+SWord* Dictionary::getSWord(string &theWord) {
+    string key = stripLowerCase(theWord);
     hash <string> hashFunction; //use the built in hass function
     int slot = hashFunction(key) % currentTableSize; //hash for sword
     
@@ -82,25 +82,25 @@ void Dictionary::insertSWord(string key, vector<Word> *allVersions) {
 void Dictionary::insertWord(string &theWord, pair <int, int> info) {
     string simple = stripLowerCase(theWord);
     //cout << "simple version: " << simple << endl;
-    if (getSWord(simple) == nullptr) {
+    if (getSWord(theWord) == nullptr) {
         //cerr << "getword failed" << endl;
         vector <Word> allVersions;
         insertSWord(simple, &allVersions);
     } 
-    insertWord_helper(theWord, simple, info);
+    insertWord_helper(theWord, info);
 }
 
-void Dictionary::insertWord_helper(string &theWord, string simple, pair <int, int> info) {
-    if (getSWord(simple)->findWord(theWord) > -1) {
+void Dictionary::insertWord_helper(string &theWord, pair <int, int> info) {
+    if (getSWord(theWord)->findWord(theWord) > -1) {
             //cerr << "branch 1" << endl;
-            Word *currWord = getSWord(simple)->getWord(theWord);
+            Word *currWord = getSWord(theWord)->getWord(theWord);
             currWord->addInfo(info);
     } else {
             //cerr << "branch 2" << endl;
             vector< pair<int,int> > index;
             Word currWord(theWord, index);
             currWord.addInfo(info);
-            getSWord(simple)->addVersion(currWord);
+            getSWord(theWord)->addVersion(currWord);
             
             
     }

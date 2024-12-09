@@ -187,5 +187,5 @@ void find() {
     pair <int, int> info {1,2};
     string theWord = "hey";
     dict.insertWord(theWord, info);
-    cout << dict.getSWord("hey")->getSimple() << endl;
+    cout << dict.getSWord(theWord)->getSimple() << endl;
 }

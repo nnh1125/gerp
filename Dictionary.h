@@ -16,10 +16,10 @@ using namespace std;
 class Dictionary {
 public:
     Dictionary();
-    SWord* getSWord(string theWord);
+    SWord* getSWord(string &theWord);
     void insertSWord(string key, vector<Word> *allVersions);
     void insertWord(string &theWord, pair <int, int> info);
-    void insertWord_helper(string &theWord, string simple, pair <int, int> info);
+    void insertWord_helper(string &theWord, pair <int, int> info);
     void full();
     void expand();
     string stripLowerCase(string &org);
