@@ -11,16 +11,16 @@ class Word {
 public:
     
     Word(string word);
-    Word(string word, vector<pair<string,int>> index);
-    ~Word();
-    string getWord();
-    vector<string> getAllVersions();
-    void addIndex(string word);
+    Word(string word, vector<pair<int,int> >index);
+    void addInfo(pair <int,int> info);
+    string getKey();
+    void debugPrint();
+    vector<pair<int,int> >* getIndex();
 
 
 private: 
-    string word;
-    vector<pair<string,int>> index;
+    string key;
+    vector<pair<int,int> > index;
 };
 
 

@@ -7,54 +7,29 @@
 #include <vector>
 #include <functional>
 #include <list>
+#include <utility>
 #include "SWord.h"
+#include "Word.h"
 
 using namespace std;
 
 class Dictionary {
 public:
     Dictionary();
-    ~Dictionary();
-    void insertVersion(string key);
-    void insertByWord(string key, string word);
-    void insertSWord(string key, vector <string> &allVersions);
+    SWord* getSWord(string theWord);
+    void insertSWord(string key, vector<Word> *allVersions);
+    void insertWord(string &theWord, pair <int, int> info);
+    void insertWord_helper(string &theWord, string simple, pair <int, int> info);
     void full();
-    int find(string &word);
-    int getTableSize();
-    int getNumItems();
-    void set();
+    void expand();
+    string stripLowerCase(string &org);
+    
 private:
-    // struct sWord {
-    //     string simple;
-    //     // vector <word> allVersions;
-    //     vector <string> allVersions;
-    // };
-
-    // struct word {
-	//     string key;
-	//     set <file> files;
-    // }
-
-    // struct file {
-	//     string fileName;
-	//     set <line> lines;
-    // }
-
-    // struct line {
-	//     int lineNum;
-	//     string lineContent;
-    // }
-
 
     int currentTableSize;
     int numItemsInTable;
+    vector < list<SWord> > table; 
     
-    vector <list<SWord>> table;
-    
-    void expand();
-    void init();
-    string stripNonAlphaNum(string input);
-    bool is_alphaNum(char c);
 };
 
 #endif

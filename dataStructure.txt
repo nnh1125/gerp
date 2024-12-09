@@ -39,7 +39,7 @@ build-up dictionary:
 
 struct word {
 	string theWord;
-	pair <int, int> info;
+	vector <pair <int, int>> info;
 }
 
 struct file {

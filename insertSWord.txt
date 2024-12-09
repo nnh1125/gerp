@@ -1,0 +1,45 @@
+SWord {
+    string simple;
+    vector <Word> allVersions;
+}
+
+Word {
+    string theWord;
+	vector <pair <int, int>> index;
+}
+
+insert a Word
+- Check if there is a SWord for that Word:
+    + if there is: check if there is already a version of that word
+        * if there is: push back the index vector
+        * if there isnt: create a Word instance then push back the allVersions
+    vector
+    + if there isnt: insertSWord. create a Word instance then push back the allVersions
+
+
+void Dictionary::insertWord(string &theWord, pair <int, int> info) {
+    string simple = stripLowerCase(theWord);
+    if (findSWord(theWord) == -1) {
+        vector <Word> allVersions;
+        insertSWord(the);
+    } 
+    insertWord_helper(theWord, info)
+}
+
+void Dictionary::insertWord_helper(string &theWord, pair <int, int> info) {
+    if (getSWord(theWord)->findWord(theWord) > -1) {
+            Word *currWord = getSWord(theWord)->getWord(theWord);
+            currWord->addInfo(info);
+    } else {
+            vector<pair<int,int>> index;
+            Word currWord = {theWord, index};
+            currWord.addInfo(info);
+    }
+}
+
+SWord* Dictionary::getSWord(string &theWord) {
+    stripping
+    int buck
+}
+
+

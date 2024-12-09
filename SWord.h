@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include "Word.h"
 
 using namespace std;
 
@@ -10,16 +11,17 @@ class SWord {
 public:
     
     SWord(string word);
-    SWord(string word, vector<string> &allVersions);
-    ~SWord();
-    string getWord();
-    vector<string> getAllVersions();
-    void addVersion(string word);
+    SWord(string word, vector<Word> &allVersions);
+    int findWord(string &theWord);
+    Word* getWord(string &theWord);
+    string getSimple();
+    vector<Word> *getAllVersions();
+    void addVersion(Word &theWord);
 
 
 private: 
     string simple;
-    vector<string> allVersions;    
+    vector<Word> allVersions;    
 };
 
 

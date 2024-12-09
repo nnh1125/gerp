@@ -22,24 +22,33 @@ LDFLAGS  = -g3
 # main.o: main.cpp processing.h DirNode.h FSTree.h
 # 	${CXX} ${CXXFLAGS} -c main.cpp
 
-main.o: main.cpp Dictionary.h
+main.o: main.cpp Dictionary.h SWord.h Word.h gerp.h
 	${CXX} ${CXXFLAGS} -c main.cpp
 
-map: main.o Dictionary.o
+gerp.o: gerp.h gerp.cpp Dictionary.h SWord.h Word.h
+	${CXX} ${CXXFLAGS} -c gerp.cpp
+
+map: main.o Dictionary.o SWord.o Word.o
 	${CXX} ${LDFLAGS} -o map $^
 
 processing.o: processing.h processing.cpp DirNode.h FSTree.h
 	${CXX} ${CXXFLAGS} -c processing.cpp
 
-Dictionary.o: Dictionary.h Dictionary.cpp SWord.o
+Dictionary.o: Dictionary.h Dictionary.cpp SWord.h Word.h
 	${CXX} ${CXXFLAGS} -c Dictionary.cpp
 
-SWord.o: SWord.h SWord.cpp
+SWord.o: SWord.h SWord.cpp Word.h
 	${CXX} ${CXXFLAGS} -c SWord.cpp
 
+Word.o: Word.h Word.cpp
+	${CXX} ${CXXFLAGS} -c Word.cpp
+
 # The below rule will be used by unit_test.
-unit_test: unit_test_driver.o Dictionary.o
+unit_test: unit_test_driver.o Dictionary.o SWord.o Word.o
 	$(CXX) $(CXXFLAGS) $^
+
+gerp: main.o Dictionary.o SWord.o Word.o gerp.o FSTree.o DirNode.o
+	${CXX} ${LDFLAGS} -o gerp $^
 
 ##
 ## Here is a special rule that removes all .o files besides the provided ones 

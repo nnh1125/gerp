@@ -14,74 +14,96 @@ Dictionary::Dictionary() {
     table.resize(10);
 }
 
-void Dictionary::init() {
-    list <SWord> nothing;
-    for (int i = 0; i < currentTableSize; i++) {
-        table.push_back(nothing);
-    }
-}
+// void Dictionary::init() {
+//     list <SWord> nothing;
+//     for (int i = 0; i < currentTableSize; i++) {
+//         table.push_back(nothing);
+//     }
+// }
+
 
 /*
- * name:      insertion
- * purpose:   insert a none stripped word
- * arguments: string key(the word)
- * returns:   none
- * effects:   insert a word
- */
-void Dictionary::insertVersion(string word) {
-    string key = stripNonAlphaNum(word);
-    insert(key, word);
-}
-
-/*
- * name:      insertByWord
- * purpose:   insert a version of SWord
+ * name:      getSWord
+ * purpose:   search among the dictionary to see if there is a SWord
+ *            (simple version of the word)
  * arguments: string key(the sWord) and the version of SWord
  * returns:   none
  * effects:   add a version to SWord
  */
-void Dictionary::insertByWord(string key, string word) {
+SWord* Dictionary::getSWord(string key) {
+    // string key = stripLowerCase(theWord);
     hash <string> hashFunction; //use the built in hass function
-    int slot = hashFunction(key) % currentTableSize; //hash
+    int slot = hashFunction(key) % currentTableSize; //hash for sword
     
-    list<string> *currList = &(table.at(slot));
+    list<SWord> *currList = &(table.at(slot));//get to the collision list
     bool searchedForCollision = false;//to check if there is word in collision chain
 
-    if(not currList->empty()) {
-        int collisionSize = currList->size();
-        for(list<string>::iterator it=currList->begin(); it != currList->end(); ++it) {
-            if(word == it->getWord()) {
+    if(not currList->empty()) { //if there is collision
+        for(list<SWord>::iterator it=currList->begin(); it != currList->end(); ++it) {
+            if(key == it->getSimple()) { // if the sword is inserted
                 searchedForCollision = true;
-                currList->push_back(word);
-                /* need to change this part to word struct */
+                return &(*it);
             }   
         }
     }
-    if((not searchedForCollision) or (currList->isEmpty())) {
-        SWord currWord(key);//create a sWord instance
-        currWord.addVersion(word);//add a version to it
-        table.at(slot).push_back(currWord);//push it into the dictionary
-        numItemsInTable++;//add numCount of the dictionary
-        full(); //check the load factor
-    }    
+
+    if((not searchedForCollision) or (currList->empty())) {
+        return nullptr;
+    } 
+    return nullptr;   
 }
 
 /*
  * name:      insertSWord 
- * purpose:   insert a SWord
+ * purpose:   insert a SWord when resizing
  * arguments: string key(the sWord) and the vector of all of its versions
  * returns:   none
  * effects:   insert a SWord
  */
-void Dictionary::insertSWord(string key, vector<string> &allVersions) {
+void Dictionary::insertSWord(string key, vector<Word> *allVersions) {
     hash <string> hashFunction; //use the built in hass function
     int slot = hashFunction(key) % currentTableSize; //hash
     
-        SWord currWord(key, allVersions);//create a sWord instance
+        SWord currWord(key, *allVersions);//create a sWord instance
+        // SWord currWord(key);
         table.at(slot).push_back(currWord);//push it into the dictionary
         numItemsInTable++;//add numCount of the dictionary
         full(); //check the load factor
        
+}
+
+/*
+ * name:      insertWord 
+ * purpose:   insert a Word with its file index and lineNum
+ * arguments: string key(the sWord) and the vector of all of its versions
+ * returns:   none
+ * effects:   insert a SWord
+ */
+void Dictionary::insertWord(string &theWord, pair <int, int> info) {
+    string simple = stripLowerCase(theWord);
+    //cout << "simple version: " << simple << endl;
+    if (getSWord(simple) == nullptr) {
+        //cerr << "getword failed" << endl;
+        vector <Word> allVersions;
+        insertSWord(simple, &allVersions);
+    } 
+    insertWord_helper(theWord, simple, info);
+}
+
+void Dictionary::insertWord_helper(string &theWord, string simple, pair <int, int> info) {
+    if (getSWord(simple)->findWord(theWord) > -1) {
+            //cerr << "branch 1" << endl;
+            Word *currWord = getSWord(simple)->getWord(theWord);
+            currWord->addInfo(info);
+    } else {
+            //cerr << "branch 2" << endl;
+            vector< pair<int,int> > index;
+            Word currWord(theWord, index);
+            currWord.addInfo(info);
+            getSWord(simple)->addVersion(currWord);
+            
+            
+    }
 }
 
 /*
@@ -101,29 +123,6 @@ void Dictionary::full() {
     }
 }
 
-/*
- * name:      find
- * purpose:   find a word in the dictionary
- * arguments: string key(the sWord)
- * returns:   the slot of the word (-1 if not found)
- * effects:   return the slot of the word
- */
-int Dictionary::find(string &word) {
-    hash <string> hashFunction; //use the built in hass function
-    int slot = hashFunction(word) % currentTableSize; //hash
-    if (not (table.at(slot)).empty()) { //if that bucket is not empty
-        list <SWord> curr = table.at(slot);
-        //search through the list
-        for (list<SWord>::iterator it=curr.begin(); it != curr.end(); ++it) {
-            SWord currWord = *it;
-            if (currWord->getWord() == word) { //if we found the word
-                return slot;
-            }
-        }
-        return -1; //we did not find the word
-    }
-    return -1;
-}
 
 /*
  * name:      expand 
@@ -133,7 +132,7 @@ int Dictionary::find(string &word) {
  * effects:   expand the hashtable
  */
 void Dictionary::expand() {
-    vector<list<SWord>> temp = table; //make a temporary table
+    vector< list<SWord> > temp = table; //make a temporary table
     table.clear();
     numItemsInTable = 0;
     table.resize(2 * currentTableSize); //double the size of the org table
@@ -150,78 +149,21 @@ void Dictionary::expand() {
         //     insert(currWord.simple, currWord.allVersions);
         // }
         while (not curr->empty()) {
-            SWord currWord = curr->front();
+            SWord currSWord = curr->front();
             curr->pop_front();
 
-            insertSWord(currWord.getWord(), &currWord.getAllVersions());
+            insertSWord(currSWord.getSimple(), currSWord.getAllVersions());
         }
     }
 }
 
-// int Dictionary::getTableSize() {
-//     return currentTableSize;
-//     //return table.capacity();
-// }
 
-// int Dictionary::getNumItems() {
-//     return numItemsInTable;
-//     //return table.size();
-// }
-
-// void Dictionary::setFile(string &word) {
-//     int slot = find(word);
-//     word currWord = table.at(slot);
-// }
-
-// Dictionary::sWord* Dictionary::getSWord(string &word) { 
-//     int slot = find(word);
-//     return &table.at(slot);
-// }
-
-// file Dictionary::getFile(Word &word, string &fileName) {
-//     for (set<file>::iterator it = word.files.begin(); it != word.files.end();
-//         ++it) {
-//             if ((*it).fileName == fileName) {
-//                 return (*it);
-//             }
-//         }
-// }
-
-// void setline(string &word, int lineNum string &line) {
-//     line curr = {lineNum, line};
-
-
-
-//     int slot = find(word);
-//     word currWord = table.at(slot);
-// }
-
-// void createLine(int lineNum, string &line) {
-//     line curr = {lineNum, }
-// }
-
-
-
-Dictionary::~Dictionary() {
-
-};
-
-string Dictionary::stripNonAlphaNum(string input) {
-    int start = 0;
-    int end = input.size();
-    while (start < input.size() and not(is_alphaNum(input[start]))) {
-        ++start;
+string Dictionary::stripLowerCase(string &org) {
+    int wordSize = org.size();
+    string lower = "";
+    for (int i = 0; i < wordSize; i++) {
+        char c = tolower(org[i]);
+        lower += c;
     }
-    while (end > start and not(is_alphaNum(input[end - 1]))) {
-        --end;
-    }
-    return input.substr(start, end - start);
-}
-
-bool Dictionary::is_alphaNum(char c) {
-    if ((c >= 'A' and c <= 'Z') or (c >= 'a' and c <= 'z') or 
-    (c >= '0' and c <= '9')) {
-        return true; 
-    }
-    return false;
+    return lower;
 }
